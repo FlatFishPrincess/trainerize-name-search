@@ -9,7 +9,7 @@ const App = () => {
   const [name, setName] = useState("");
   const [profile, setProfile] = useState({});
   const [loading, setLoading] = useState(false);
-
+  const [errorMsg, setErrorMsg] = useState("");
   // set timeout to reduce redundant API calls
   useEffect(() => {
     const timeOutId = setTimeout(() => handleProfileByName(name), 500);
@@ -17,11 +17,21 @@ const App = () => {
   }, [name]);
 
   const handleChangeInput = e => {
-    setName(e.target.value);
+    const isValidInput = validateInput(e.target.value);
+    if(!isValidInput) {
+      setErrorMsg('Numbers or special characters are not accepted');
+    } else {
+      setErrorMsg("");
+      setName(e.target.value);
+    }
     // reset profile data if input is empty
     if(e.target.value === "") {
       setProfile({});
     }
+  }
+
+  const validateInput = input => {
+    return input.match(/[^A-Za-z ]/g) ? false : true;
   }
 
   // if user enter press, fetching data
@@ -32,6 +42,7 @@ const App = () => {
     }
   }
 
+  // update data and set it in localStorage
   const handleSetProfileStorage = (newProfile) => {
     const profileData = localStorage.getItem('profile');
     let data = JSON.parse(profileData);
@@ -48,8 +59,8 @@ const App = () => {
     return data[name];
   }
 
+  // see if there's any duplicate. if not, fetch
   const handleProfileByName = (name) => {
-    // see if there's any duplicate
     const profileFromCache = validateDuplicateName(name);
     if(profileFromCache) {
       setProfile(profileFromCache);
@@ -68,11 +79,14 @@ const App = () => {
         const { name, age, count } = await result.json();
         setProfile({ name, age, count });
         handleSetProfileStorage({ name, age, count });
+        setLoading(false);
       } else {
         const errMsg = 'Unexpected error occurs';
         throw errMsg;
       }
     } catch (e) {
+      setErrorMsg(e);
+      setLoading(false);
       console.log('err msg', e);
     }
   }
@@ -98,6 +112,7 @@ const App = () => {
             value={name}
             onKeyPress={handleKeyPress}
           />
+          {errorMsg && <span className="control__error">{errorMsg}</span>}
         </div>
         <hr className="divider" />
         <div className="result-container">

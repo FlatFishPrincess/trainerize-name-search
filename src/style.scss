@@ -45,11 +45,18 @@
             border-radius: 4px;
             padding-left: 10px;
         }
+        .control__error {
+            color: red;
+        }
     }
 
     .divider {
-        border: 2px solid #EEEEEE;
         width: 100%;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        border: 1px solid #EEEEEE;
     }
 
     .result-container {
