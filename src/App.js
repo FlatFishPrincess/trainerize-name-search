@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import logo from "./assets/logo_trainerize.png";
-import "./style.scss";
+import "./index.scss";
 import Loading from "./loading/Loading";
 
 const BASE_FETCH_URL = "https://api.agify.io/";
